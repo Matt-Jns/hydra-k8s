@@ -1,0 +1,142 @@
+## Configuration values for the PostgreSQL server.
+postgresql:
+  image: gcr.io/cloud-marketplace/google/postgresql13:13.4
+
+  exporter:
+    image: gcr.io/cloud-marketplace/google/postgresql-exporter0:0.8.0
+
+  cpu: 1000m
+  memory: 1Gi
+
+  user: hydra
+  password: hydra
+  postgresDatabase: hydra
+
+  persistence:
+    size: 8Gi
+
+tls:
+  base64EncodedPrivateKey: null
+  base64EncodedCertificate: null
+
+persistence:
+  storageClass: standard
+  accessMode: ReadWriteOnce
+
+metrics:
+  image: null
+  exporter:
+    enabled: false
+
+deployer:
+  image: null
+
+# -- Number of ORY Hydra members
+replicaCount: 1
+
+image:
+  # -- ORY Hydra image
+  repository: oryd/hydra
+  # -- ORY Hydra version
+  tag: v1.10.5
+
+# Chart name override
+nameOverride: ""
+# -- Full chart name override
+fullnameOverride: ""
+
+secret:
+  # -- Provide custom name of existing secret, or custom name of secret to be created
+  nameOverride: ""
+
+# -- Enable public ingress
+ingressAdminEnable: false
+
+# -- Enable admin ingress
+ingressAdminEnable: false
+
+# -- Configure ingress
+ingress:
+  # -- Configure ingress for the proxy port.
+  public:
+    # -- En-/Disable the proxy ingress.
+    enabled: false
+    className: ""
+    annotations: {}
+    #     kubernetes.io/ingress.class: nginx
+    #     kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: public.hydra.localhost
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+  #    tls: []
+  #        hosts:
+  #          - proxy.hydra.local
+  #      - secretName: hydra-proxy-example-tls
+
+  admin:
+    # -- En-/Disable the api ingress.
+    enabled: false
+    className: ""
+    hosts:
+      - host: admin.hydra.localhost
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+#    tls: []
+#      hosts:
+#        - api.hydra.local
+#      - secretName: hydra-api-example-tls
+
+# -- Configure ORY Hydra itself
+hydra:
+  serviceAccount:
+    name: hydra-sa
+  # -- The ORY Hydra configuration. For a full list of available settings, check:
+  #  https://www.ory.sh/docs/hydra/reference/configuration
+  config:
+    dsn: postgres://hydra:hydra@hydra-1-postgresql-svc:5432/hydra?sslmode=disable
+    secrets: {}
+    # system:
+    #   - "OG5XbmxXa3dYeGplQXpQanYxeEFuRUFa"
+    urls:
+      self: {}
+    
+  dangerousForceHttp: true
+
+deployment:
+  # -- Configure HPA - MAKE IT OPTIONAL, FOR USER TO CHOOSE
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+
+
+
+
+
+# -- Configures the Kubernetes service
+service:
+  # -- Configures the Kubernetes service for the proxy port.
+  public:
+    # -- En-/disable the service
+    enabled: true
+    # -- The service type
+    type: ClusterIP
+
+  admin:
+    # -- En-/disable the service
+    enabled: true
+    # -- The service type
+    type: ClusterIP
+# -- Values for initialization job
+job:
+  serviceAccount:
+    # -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template
+    name: "hydra-migration-sa"
+
+
+# -- Configures controller setup
+maester:
+  enabled: true

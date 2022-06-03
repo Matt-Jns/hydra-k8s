@@ -1,0 +1,38 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "hydra.fullname" . }}-automigrate
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+{{ include "hydra.labels" . | indent 4 }}
+  annotations:
+    helm.sh/hook-weight: "1"
+    helm.sh/hook: "post-install, post-upgrade"
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded"
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ .Values.job.serviceAccount.name }}
+      automountServiceAccountToken: true
+      containers:
+      - name: {{ .Chart.Name }}-automigrate
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: IfNotPresent
+        command: ["hydra"]
+        args: ["migrate", "sql", "-e", "--yes"]
+        env:
+          - name: DSN
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "hydra.secretname" . }}
+                key: dsn
+        {{- if .Values.deployment.securityContext }}
+        securityContext:
+          {{- toYaml .Values.deployment.securityContext | nindent 10 }}
+        {{- end }}
+      restartPolicy: Never
+      shareProcessNamespace: false
+  backoffLimit: 10

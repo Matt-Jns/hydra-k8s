@@ -1,0 +1,44 @@
+{{- if or .Values.ingress.public.enabled .Values.demo -}}
+{{- $fullName := include "hydra.fullname" . -}}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-public
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "hydra.labels" . | nindent 4 }}
+spec:
+  ingressClassName: ""
+  {{- if .Values.ingress.public.tls }}
+  tls:
+    {{- range .Values.ingress.public.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.ingress.public.hosts }}
+    - host: "public.hydra.localhost"
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}-public
+                port:
+                  name: http
+              {{- else }}
+              serviceName: {{ $fullName }}-public
+              servicePort: http
+              {{- end }}
+              {{- end }}
+{{- end }}

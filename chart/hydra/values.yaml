@@ -34,75 +34,28 @@ deployer:
 # -- Number of ORY Hydra members
 replicaCount: 1
 
-image:
-  # -- ORY Hydra image
-  repository: oryd/hydra
-  # -- ORY Hydra version
-  tag: v1.10.5
-
-# Chart name override
-nameOverride: ""
-# -- Full chart name override
-fullnameOverride: ""
-
-secret:
-  # -- Provide custom name of existing secret, or custom name of secret to be created
-  nameOverride: ""
-
-# -- Enable public ingress
-ingressAdminEnable: false
-
-# -- Enable admin ingress
-ingressAdminEnable: false
-
 # -- Configure ingress
 ingress:
-  # -- Configure ingress for the proxy port.
   public:
-    # -- En-/Disable the proxy ingress.
-    enabled: false
-    className: ""
-    annotations: {}
-    #     kubernetes.io/ingress.class: nginx
-    #     kubernetes.io/tls-acme: "true"
-    hosts:
-      - host: public.hydra.localhost
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-  #    tls: []
-  #        hosts:
-  #          - proxy.hydra.local
-  #      - secretName: hydra-proxy-example-tls
+    enabled: true
 
   admin:
-    # -- En-/Disable the api ingress.
-    enabled: false
-    className: ""
-    hosts:
-      - host: admin.hydra.localhost
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-#    tls: []
-#      hosts:
-#        - api.hydra.local
-#      - secretName: hydra-api-example-tls
+    enabled: true
 
 # -- Configure ORY Hydra itself
 hydra:
+  image:
+    # -- ORY Hydra image
+    repo: gcr.io/ccm-ops-test-adhoc
+    # -- ORY Hydra version
+    tag: 1.11.8
   serviceAccount:
     name: hydra-sa
   # -- The ORY Hydra configuration. For a full list of available settings, check:
   #  https://www.ory.sh/docs/hydra/reference/configuration
   config:
-    dsn: postgres://hydra:hydra@hydra-1-postgresql-svc:5432/hydra?sslmode=disable
-    secrets: {}
-    # system:
-    #   - "OG5XbmxXa3dYeGplQXpQanYxeEFuRUFa"
-    urls:
-      self: {}
-    
+    dsn: postgres://hydra:hydra@{{ .Release.Name }}-postgresql-svc:5432/hydra?sslmode=disable
+
   dangerousForceHttp: true
 
 deployment:

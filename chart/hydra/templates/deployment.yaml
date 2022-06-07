@@ -1,52 +1,58 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "hydra.fullname" . }}
+  name: {{ .Release.Name }}
   {{- if .Release.Namespace }}
   namespace: {{ .Release.Namespace }}
   {{- end }}
   labels:
 {{ include "hydra.labels" . | indent 4 }}
+    app.kubernetes.io/component: hydra
 spec:
 {{- if not .Values.deployment.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
 {{- end }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "hydra.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/name: {{ .Release.Name }}
+      app.kubernetes.io/component: hydra
   template:
     metadata:
       labels:
 {{ include "hydra.labels" . | indent 8 }}
+        app.kubernetes.io/component: hydra
     spec:
-      volumes:
-        - name: {{ include "hydra.name" . }}-config-volume
-          configMap:
-            name: {{ include "hydra.fullname" . }}
+      # volumes:
+      #   - name: {{ .Release.Name }}-config-volume
+      #     configMap:
+      #       name: {{ .Release.Name }}
       serviceAccountName: {{ .Values.hydra.serviceAccount.name }}
       automountServiceAccountToken: true
       initContainers:
         - name: init-myservice
-          image: busybox:1.28
-          command: ['sh', '-c', "sleep 30s"]
+          image: postgres
+          command: ['sh', '-c', "until psql $DSN -c \"select * from hydra_client;\"; do echo waiting for PostgreSQL; sleep 5; done"]
+          env:
+            - name: DSN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}
+                  key: dsn
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        - name: hydra
+          image: "{{ .Values.hydra.image.repo }}:{{ .Values.hydra.image.tag }}"
           imagePullPolicy: IfNotPresent
-          command: ["hydra"]
-          volumeMounts:
-            - name: {{ include "hydra.name" . }}-config-volume
-              mountPath: /etc/config
-              readOnly: true
+          command: ["/opt/hydra"]
+          # volumeMounts:
+          #   - name: {{ .Release.Name }}-config-volume
+          #     mountPath: /etc/config
+          #     readOnly: true
           args: [
             "serve",
             "all",
             {{- if .Values.hydra.dangerousForceHttp }}
-            "--dangerous-force-http",
-            {{- end}}            
-            "--config",
-            "/etc/config/config.yaml"
+            "--dangerous-force-http"
+            {{- end}}
           ]
           ports:
             - name: http-public
@@ -70,25 +76,20 @@ spec:
             periodSeconds: 10
             failureThreshold: 5
           env:
-            {{- $issuer := include "hydra.config.urls.issuer" . -}}
-            {{- if $issuer }}
-            - name: URLS_SELF_ISSUER
-              value: {{ $issuer | quote }}
-            {{- end }}
             - name: DSN
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "hydra.secretname" . }}
+                  name: {{ .Release.Name }}
                   key: dsn
             - name: SECRETS_SYSTEM
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "hydra.secretname" . }}
+                  name: {{ .Release.Name }}
                   key: secretsSystem
             - name: SECRETS_COOKIE
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "hydra.secretname" . }}
+                  name: {{ .Release.Name }}
                   key: secretsCookie
           securityContext:
             capabilities:

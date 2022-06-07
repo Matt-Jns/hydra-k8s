@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "hydra.fullname" . }}-automigrate
+  name: {{ .Release.Name }}-automigrate
   {{- if .Release.Namespace }}
   namespace: {{ .Release.Namespace }}
   {{- end }}
@@ -10,24 +10,33 @@ metadata:
 {{ include "hydra.labels" . | indent 4 }}
   annotations:
     helm.sh/hook-weight: "1"
-    helm.sh/hook: "post-install, post-upgrade"
     helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded"
 spec:
   template:
     spec:
       serviceAccountName: {{ .Values.job.serviceAccount.name }}
       automountServiceAccountToken: true
+      initContainers:
+        - name: init-myservice
+          image: postgres
+          command: ['sh', '-c', "until pg_isready -h {{ .Release.Name }}-postgresql-svc -p 5432; do echo waiting for PostgreSQL; sleep 2; done"]
+          env:
+            - name: DSN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}
+                  key: dsn
       containers:
-      - name: {{ .Chart.Name }}-automigrate
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+      - name: {{ .Release.Name }}-automigrate
+        image: "{{ .Values.hydra.image.repo }}:{{ .Values.hydra.image.tag }}"
         imagePullPolicy: IfNotPresent
-        command: ["hydra"]
+        command: ["/opt/hydra"]
         args: ["migrate", "sql", "-e", "--yes"]
         env:
           - name: DSN
             valueFrom:
               secretKeyRef:
-                name: {{ include "hydra.secretname" . }}
+                name: {{ .Release.Name }}
                 key: dsn
         {{- if .Values.deployment.securityContext }}
         securityContext:

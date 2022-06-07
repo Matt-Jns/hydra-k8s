@@ -1,0 +1,110 @@
+## Configuration values for the PostgreSQL server.
+postgresql:
+  image: gcr.io/cloud-marketplace/google/postgresql13:13.4
+
+  exporter:
+    image: gcr.io/cloud-marketplace/google/postgresql-exporter0:0.8.0
+
+  cpu: 1000m
+  memory: 1Gi
+
+  user: hydra
+  password: hydra
+  postgresDatabase: hydra
+
+  persistence:
+    size: 8Gi
+
+tls:
+  base64EncodedPrivateKey: null
+  base64EncodedCertificate: null
+
+persistence:
+  storageClass: standard
+  accessMode: ReadWriteOnce
+
+metrics:
+  image: null
+  exporter:
+    enabled: false
+
+deployer:
+  image: null
+
+# -- Number of ORY Hydra members
+replicaCount: 1
+
+# Chart name override
+nameOverride: ""
+# -- Full chart name override
+fullnameOverride: ""
+
+secret:
+  # -- Provide custom name of existing secret, or custom name of secret to be created
+  nameOverride: ""
+
+
+# -- Configure ingress
+ingress:
+  public:
+    enabled: true
+
+  admin:
+    enabled: true
+
+# -- Configure ORY Hydra itself
+hydra:
+  image:
+    # -- ORY Hydra image
+    repo: "mattjcontainerregistry/hydra"
+    # -- ORY Hydra version
+    tag: null
+  serviceAccount:
+    name: hydra-sa
+  # -- The ORY Hydra configuration. For a full list of available settings, check:
+  #  https://www.ory.sh/docs/hydra/reference/configuration
+  config:
+    dsn: postgres://hydra:hydra@hydra-1-postgresql-svc:5432/hydra?sslmode=disable
+    secrets: {}
+    # system:
+    #   - "OG5XbmxXa3dYeGplQXpQanYxeEFuRUFa"
+    urls:
+      self: {}
+
+  dangerousForceHttp: true
+
+deployment:
+  # -- Configure HPA - MAKE IT OPTIONAL, FOR USER TO CHOOSE
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+
+
+
+
+
+# -- Configures the Kubernetes service
+service:
+  # -- Configures the Kubernetes service for the proxy port.
+  public:
+    # -- En-/disable the service
+    enabled: true
+    # -- The service type
+    type: ClusterIP
+
+  admin:
+    # -- En-/disable the service
+    enabled: true
+    # -- The service type
+    type: ClusterIP
+# -- Values for initialization job
+job:
+  serviceAccount:
+    # -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template
+    name: "hydra-migration-sa"
+
+
+# -- Configures controller setup
+maester:
+  enabled: true

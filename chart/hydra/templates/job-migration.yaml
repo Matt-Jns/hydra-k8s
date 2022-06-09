@@ -17,8 +17,8 @@ spec:
       serviceAccountName: {{ .Values.job.serviceAccount.name }}
       automountServiceAccountToken: true
       initContainers:
-        - name: init-myservice
-          image: postgres
+        - name: init-db
+          image: {{ .Values.postgresql.image }}
           command: ['sh', '-c', "until pg_isready -h {{ .Release.Name }}-postgresql-svc -p 5432; do echo waiting for PostgreSQL; sleep 2; done"]
           env:
             - name: DSN
@@ -38,10 +38,15 @@ spec:
               secretKeyRef:
                 name: {{ .Release.Name }}
                 key: dsn
-        {{- if .Values.deployment.securityContext }}
         securityContext:
-          {{- toYaml .Values.deployment.securityContext | nindent 10 }}
-        {{- end }}
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 100
+          allowPrivilegeEscalation: false
+          privileged: false
       restartPolicy: Never
       shareProcessNamespace: false
   backoffLimit: 10

@@ -9,19 +9,12 @@ postgresql:
   memory: 1Gi
 
   user: hydra
-  password: hydra
+  password: null
   postgresDatabase: hydra
 
   persistence:
     size: 8Gi
 
-tls:
-  base64EncodedPrivateKey: null
-  base64EncodedCertificate: null
-
-persistence:
-  storageClass: standard
-  accessMode: ReadWriteOnce
 
 metrics:
   image: null
@@ -30,9 +23,6 @@ metrics:
 
 deployer:
   image: null
-
-# -- Number of ORY Hydra members
-replicaCount: 1
 
 # -- Configure ingress
 ingress:
@@ -53,21 +43,13 @@ hydra:
     name: hydra-sa
   # -- The ORY Hydra configuration. For a full list of available settings, check:
   #  https://www.ory.sh/docs/hydra/reference/configuration
-  config:
-    dsn: postgres://hydra:hydra@{{ .Release.Name }}-postgresql-svc:5432/hydra?sslmode=disable
 
   dangerousForceHttp: true
-
-deployment:
   # -- Configure HPA - MAKE IT OPTIONAL, FOR USER TO CHOOSE
   autoscaling:
-    enabled: false
+    enabled: true
     minReplicas: 1
     maxReplicas: 3
-
-
-
-
 
 # -- Configures the Kubernetes service
 service:
@@ -83,10 +65,10 @@ service:
     enabled: true
     # -- The service type
     type: ClusterIP
+
 # -- Values for initialization job
 job:
   serviceAccount:
-    # -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template
     name: "hydra-migration-sa"
 
 

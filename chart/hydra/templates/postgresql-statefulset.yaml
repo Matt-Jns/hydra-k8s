@@ -90,8 +90,8 @@ spec:
       labels: *PostgreSQLLabels
     spec:
       accessModes:
-      - {{ .Values.persistence.accessMode }}
-      storageClassName: {{ .Values.persistence.storageClass }}
+      - ReadWriteOnce
+      storageClassName: standard
       resources:
         requests:
           storage: {{ .Values.postgresql.persistence.size }}

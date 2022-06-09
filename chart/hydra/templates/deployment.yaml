@@ -9,8 +9,8 @@ metadata:
 {{ include "hydra.labels" . | indent 4 }}
     app.kubernetes.io/component: hydra
 spec:
-{{- if not .Values.deployment.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+{{- if not .Values.hydra.autoscaling.enabled }}
+  replicas: 1
 {{- end }}
   selector:
     matchLabels:
@@ -29,8 +29,8 @@ spec:
       serviceAccountName: {{ .Values.hydra.serviceAccount.name }}
       automountServiceAccountToken: true
       initContainers:
-        - name: init-myservice
-          image: postgres
+        - name: init-db
+          image: {{ .Values.postgresql.image }}
           command: ['sh', '-c', "until psql $DSN -c \"select * from hydra_client;\"; do echo waiting for PostgreSQL; sleep 5; done"]
           env:
             - name: DSN
@@ -100,7 +100,3 @@ spec:
             runAsUser: 100
             allowPrivilegeEscalation: false
             privileged: false
-      {{- if .Values.priorityClassName }}
-      priorityClassName: {{ .Values.priorityClassName }}
-      {{- end }}
-

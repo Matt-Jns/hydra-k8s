@@ -6,6 +6,8 @@ metadata:
   labels:
 {{ include "hydra.labels" . | indent 4 }}
     app.kubernetes.io/component: hydra
+  annotations:
+    cloud.google.com/backend-config: '{"default": "{{ .Release.Name }}-public"}'
 spec:
   type: ClusterIP
   ports:

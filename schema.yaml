@@ -76,6 +76,16 @@ properties:
     description: Storage size for PostgreSQL persistent volume
     default: '8Gi'
     pattern: '^[1-9][0-9]*(\.[0-9]+)?[TGM]i?$'
+  ingress.public.enabled:
+    type: boolean
+    title: Expose Public API Endpoint
+    description: Enable Ingress for Public API Endpoint
+    default: true
+  ingress.admin.enabled:
+    type: boolean
+    title: Expose Administrative API Endpoint
+    description: Enable Ingress for Administrative API Endpoint
+    default: true
   metrics.exporter.enabled:
     type: boolean
     title: Enable Stackdriver Metrics Exporter
@@ -89,6 +99,14 @@ properties:
       type: GENERATED_PASSWORD
       generatedPassword:
         length: 32
+  certificate:
+    type: string
+    x-google-marketplace:
+      type: TLS_CERTIFICATE
+      tlsCertificate:
+        generatedProperties:
+          base64EncodedPrivateKey: ingress.tls.base64EncodedPrivateKey
+          base64EncodedCertificate: ingress.tls.base64EncodedCertificate
 
 required:
 - name

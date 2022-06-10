@@ -28,9 +28,11 @@ deployer:
 ingress:
   public:
     enabled: true
-
   admin:
     enabled: true
+  tls:
+    base64EncodedPrivateKey: null
+    base64EncodedCertificate: null
 
 # -- Configure ORY Hydra itself
 hydra:
@@ -50,21 +52,6 @@ hydra:
     enabled: true
     minReplicas: 1
     maxReplicas: 3
-
-# -- Configures the Kubernetes service
-service:
-  # -- Configures the Kubernetes service for the proxy port.
-  public:
-    # -- En-/disable the service
-    enabled: true
-    # -- The service type
-    type: ClusterIP
-
-  admin:
-    # -- En-/disable the service
-    enabled: true
-    # -- The service type
-    type: ClusterIP
 
 # -- Values for initialization job
 job:

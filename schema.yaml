@@ -73,24 +73,45 @@ properties:
   postgresql.persistence.size:
     type: string
     title: PostgreSQL storage size
-    description: Storage size for PostgreSQL persistent volume
+    description: Storage size for PostgreSQL persistent volume.
     default: '8Gi'
     pattern: '^[1-9][0-9]*(\.[0-9]+)?[TGM]i?$'
   ingress.public.enabled:
     type: boolean
     title: Expose Public API Endpoint
-    description: Enable Ingress for Public API Endpoint
-    default: true
+    description: Enable Ingress for Public API Endpoint.
+    default: false
   ingress.admin.enabled:
     type: boolean
     title: Expose Administrative API Endpoint
-    description: Enable Ingress for Administrative API Endpoint
-    default: true
+    description: Enable Ingress for Administrative API Endpoint.
+    default: false
+  hydra.dangerousForceHttp:
+    type: boolean
+    title: Enable or disable HTTP/2 over TLS (HTTPS)
+    description: Enable or disable HTTP/2 over TLS (HTTPS) and serves HTTP instead.
+    default: false
+  hydra.config.urls.login:
+    type: string
+    title: Login endpoint of the User Login & Consent flow.
+    description: Sets the login endpoint of the User Login & Consent flow.
+  hydra.config.urls.logout:
+    type: string
+    title: Logout endpoint of the User Login & Consent flow.
+    description: Sets the logout endpoint of the User Login & Consent flow.
+  hydra.config.urls.consent:
+    type: string
+    title: The consent endpoint of the User Login & Consent flow.
+    description: Sets the consent endpoint of the User Login & Consent flow.
+  hydra.config.urls.self.issuer:
+    type: string
+    title: This value will be used as the "issuer" in access and ID tokens.
+    description: Sets value that will be used as the "issuer" in access and ID tokens. It must be specified and using HTTPS protocol, unless --dangerous-force-http is set. This should typically be equal to the public value.
   metrics.exporter.enabled:
     type: boolean
     title: Enable Stackdriver Metrics Exporter
-    description: Your GCP project should have Stackdriver enabled. For non-GCP clusters, export of metrics to Stackdriver is not supported yet
-    default: false
+    description: Your GCP project should have Stackdriver enabled. For non-GCP clusters, export of metrics to Stackdriver is not supported yet.
+    default: true
 
   # Generated values
   postgresql.password:

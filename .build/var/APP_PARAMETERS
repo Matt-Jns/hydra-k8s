@@ -1,1 +1,1 @@
-{ name: hydra-1, namespace: default  }
+{ name: hydra-1, namespace: default , ingress.public.enabled: true , ingress.admin.enabled: false , hydra.dangerousForceHttp: true , hydra.config.urls.login: http://127.0.0.1:3000/login , hydra.config.urls.logout: http://127.0.0.1:3000/logout , hydra.config.urls.consent: http://127.0.0.1:3000/consent  , metrics.exporter.enabled: true }

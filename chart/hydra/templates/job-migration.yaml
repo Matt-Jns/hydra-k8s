@@ -3,9 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ .Release.Name }}-automigrate
-  {{- if .Release.Namespace }}
   namespace: {{ .Release.Namespace }}
-  {{- end }}
   labels:
 {{ include "hydra.labels" . | indent 4 }}
   annotations:

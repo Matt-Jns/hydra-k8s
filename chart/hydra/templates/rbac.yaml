@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ .Values.hydra.serviceAccount.name }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "hydra.labels" . | nindent 4 }}
 ---
@@ -10,6 +11,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ .Values.job.serviceAccount.name }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "hydra.labels" . | nindent 4 }}
   annotations:

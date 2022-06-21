@@ -41,6 +41,33 @@ RELEASE ?= $(C2D_CONTAINER_RELEASE)-$(BUILD_ID)
 NAME ?= $(APP_ID)-1
 
 # Additional variables
+ifdef INGRESS_PUBLIC_ENABLED
+  INGRESS_PUBLIC_ENABLED_FIELD = , "ingress.public.enabled": $(METRICS_EXPORTER_ENABLED)
+endif
+
+ifdef INGRESS_ADMIN_ENABLED
+  INGRESS_ADMIN_ENABLED_FIELD = , "ingress.admin.enabled": $(INGRESS_PUBLIC_ENABLED)
+endif
+
+ifdef FORCE_HTTP_ENABLED
+  FORCE_HTTP_ENABLED_FIELD = , "hydra.dangerousForceHttp": $(FORCE_HTTP_ENABLED)
+endif
+
+ifdef URLS_LOGIN
+  URLS_LOGIN_FIELD = , "hydra.config.urls.login": $(URLS_LOGIN)
+endif
+
+ifdef URLS_LOGOUT
+  URLS_LOGOUT_FIELD = , "hydra.config.urls.logout": $(URLS_LOGOUT)
+endif
+
+ifdef URLS_CONSENT
+  URLS_CONSENT_FIELD = , "hydra.config.urls.consent": $(URLS_CONSENT)
+endif
+
+ifdef URLS_SELF_ISSUER
+  URLS_SELF_ISSUER_FIELD = , "hydra.config.urls.self.issuer": $(URLS_SELF_ISSUER)
+endif
 
 ifdef METRICS_EXPORTER_ENABLED
   METRICS_EXPORTER_ENABLED_FIELD = , "metrics.exporter.enabled": $(METRICS_EXPORTER_ENABLED)
@@ -49,6 +76,13 @@ endif
 APP_PARAMETERS ?= { \
   "name": "$(NAME)", \
   "namespace": "$(NAMESPACE)" \
+  $(INGRESS_PUBLIC_ENABLED_FIELD) \
+  $(INGRESS_ADMIN_ENABLED_FIELD) \
+  $(FORCE_HTTP_ENABLED_FIELD) \
+  $(URLS_LOGIN_FIELD) \
+  $(URLS_LOGOUT_FIELD) \
+  $(URLS_CONSENT_FIELD) \
+  $(URLS_SELF_ISSUER_FIELD) \
   $(METRICS_EXPORTER_ENABLED_FIELD) \
 }
 

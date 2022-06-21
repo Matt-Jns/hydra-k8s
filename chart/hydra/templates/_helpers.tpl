@@ -36,3 +36,10 @@ Generate the dsn value
 postgres://{{- .Values.postgresql.user }}:{{- .Values.postgresql.password }}@{{ .Release.Name }}-postgresql-svc:5432/{{- .Values.postgresql.postgresDatabase }}?sslmode=disable
 {{- end -}}
 
+{{/*
+Generate the configmap data, redacting secrets
+*/}}
+{{- define "hydra.configmap" -}}
+{{- $config := .Values.hydra.config -}}
+{{- toYaml $config -}}
+{{- end -}}

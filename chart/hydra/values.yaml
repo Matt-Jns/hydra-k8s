@@ -17,9 +17,9 @@ postgresql:
 
 
 metrics:
-  image: null
+  image: gke.gcr.io/prometheus-to-sd:v0.11.1-gke.1
   exporter:
-    enabled: false
+    enabled: true
 
 deployer:
   image: null
@@ -27,9 +27,9 @@ deployer:
 # -- Configure ingress
 ingress:
   public:
-    enabled: true
+    enabled: false
   admin:
-    enabled: true
+    enabled: false
   tls:
     base64EncodedPrivateKey: null
     base64EncodedCertificate: null
@@ -37,28 +37,34 @@ ingress:
 # -- Configure ORY Hydra itself
 hydra:
   image:
-    # -- ORY Hydra image
     repo: gcr.io/ccm-ops-test-adhoc
-    # -- ORY Hydra version
     tag: 1.11.8
   serviceAccount:
     name: hydra-sa
-  # -- The ORY Hydra configuration. For a full list of available settings, check:
-  #  https://www.ory.sh/docs/hydra/reference/configuration
 
   dangerousForceHttp: true
-  # -- Configure HPA - MAKE IT OPTIONAL, FOR USER TO CHOOSE
+
   autoscaling:
     enabled: true
     minReplicas: 1
     maxReplicas: 3
 
+  config:
+    serve:
+      public:
+        port: 4444
+      admin:
+        port: 4445
+      tls:
+        allow_termination_from:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
+
+    urls:
+      self: {}
 # -- Values for initialization job
 job:
   serviceAccount:
     name: "hydra-migration-sa"
 
-
-# -- Configures controller setup
-maester:
-  enabled: true

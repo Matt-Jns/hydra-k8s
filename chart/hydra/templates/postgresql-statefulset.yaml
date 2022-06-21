@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}-postgresql
+  namespace: {{ .Release.Namespace }}
   labels: &PostgreSQLLabels
     app.kubernetes.io/name: {{ .Release.Name }}
     app.kubernetes.io/component: postgresql-server
@@ -62,7 +63,7 @@ spec:
               name: {{ .Release.Name }}-postgresql-secret
               key: db-password
       {{- if .Values.metrics.exporter.enabled }}
-      - name: stackdriver-exporter
+      - name: prometheus-to-sd
         image: {{ .Values.metrics.image }}
         ports:
         - name: profiler
@@ -73,7 +74,7 @@ spec:
         - --source=postgresql:http://localhost:9187/metrics
         - --pod-id=$(POD_NAME)
         - --namespace-id=$(POD_NAMESPACE)
-        - --monitored-resource-types=k8s
+        - --monitored-resource-type-prefix=k8s_
         env:
         - name: POD_NAME
           valueFrom:

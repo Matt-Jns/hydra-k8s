@@ -1,7 +1,9 @@
+{{- if .Values.ingress.public.enabled -}}
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
   name: {{ .Release.Name }}-public
+  namespace: {{ .Release.Namespace }}
 spec:
   healthCheck:
     checkIntervalSec: 10
@@ -11,6 +13,8 @@ spec:
     type: HTTP
     requestPath: /health/ready
     port: 4444
+{{- end }}
+{{- if .Values.ingress.admin.enabled -}}
 ---
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
@@ -25,4 +29,4 @@ spec:
     type: HTTP
     requestPath: /health/ready
     port: 4445
-  
+{{- end }}

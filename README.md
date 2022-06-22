@@ -16,7 +16,7 @@ The application offers the Ory Hydra application deployed as StatefulSet with Po
 ![Architecture diagram](resources/hydra-k8s-app-architecture.png)
 
 Ory Hydra configuration file `/etc/config/config.yaml` is automatically generated in the application
-through a Kubernetes ConfigMap. It's good to know that you can modify this ConfigMap and then remove the Hydra Pod to reload the Hydra configuration.
+through a Kubernetes ConfigMap. It's good to know that you can modify this ConfigMap and then remove the Hydra Pod (it is managed by StatefulSet so the Pod will be recreated) to reload the Hydra configuration.
 
 # Installation
 
@@ -164,15 +164,16 @@ export POSTGRES_PASSWORD="$(generate_pwd)"
 ```
 
 Set the login, logout and consent endpoint of the User Login & Consent flow.
-NOTE: It should point to your User Login & Consent App.
+> **NOTE:** It should point to your User Login & Consent App.
+
 ```shell
 export URLS_LOGIN=<URLS_LOGIN>
 export URLS_LOGOUT=<URLS_LOGOUT>
 export URLS_CONSENT=<URLS_CONSENT>
 ```
 
-## (Optional) Expose Public/Admin API Endpoint
-You can enable Ingress for Public or Admin API Endpoint by setting `true` value for the `INGRESS_PUBLIC_ENABLED` and `INGRESS_ADMIN_ENABLED` variables:
+#### (Optional) Expose Public/Admin API Endpoint
+You can enable Ingress for Public or Admin API Endpoint by changing the value to `true` for the `INGRESS_PUBLIC_ENABLED` and `INGRESS_ADMIN_ENABLED` variables:
 
 ```shell
 export INGRESS_PUBLIC_ENABLED=false
@@ -203,9 +204,11 @@ export INGRESS_ADMIN_ENABLED=false
     export TLS_CERTIFICATE_CRT="$(cat /tmp/tls.crt | base64)"
     ```
 
-## (Optional) Enable HTTP/2 over TLS (HTTPS)
+#### (Optional) Enable HTTP/2 over TLS (HTTPS)
 
-If you would like to use https instead of http you need to set the `FORCE_HTTP_ENABLED` to `false` and specify the value that will be used as the "issuer" in access and ID tokens:
+If you would like to use https instead of http, you need to set the `FORCE_HTTP_ENABLED` to `false` and specify the value to be used as the "issuer" in access and ID tokens:
+
+> **NOTE:** With this option enabled you may need to configure a few other options. For more information see the [official Ory Hydra documentation](https://www.ory.sh/docs/welcome).
 
 ```shell
 export FORCE_HTTP_ENABLED=true
@@ -242,7 +245,7 @@ helm template "${APP_INSTANCE_NAME}" chart/hydra \
   --set hydra.dangerousForceHttp="${FORCE_HTTP_ENABLED}" \
   --set ingress.tls.base64EncodedPrivateKey="${TLS_CERTIFICATE_KEY}" \
   --set ingress.tls.base64EncodedCertificate="${TLS_CERTIFICATE_CRT}" \
-  --set hydra.config.urls.self.issuer="${URLS_SELF_ISSUER}" \ <--- Please delete this line, if you didn't specify the "URLS_SELF_ISSUER"
+  --set hydra.config.urls.self.issuer="${URLS_SELF_ISSUER}" \
   --set metrics.image="${IMAGE_METRICS_EXPORTER}" \
   --set metrics.exporter.enabled="${METRICS_EXPORTER_ENABLED}" > "${APP_INSTANCE_NAME}"_manifest.yaml
 ```

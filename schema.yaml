@@ -90,7 +90,7 @@ properties:
     type: boolean
     title: Enable or disable HTTP/2 over TLS (HTTPS)
     description: Enable or disable HTTP/2 over TLS (HTTPS) and serves HTTP instead.
-    default: false
+    default: true
   hydra.config.urls.login:
     type: string
     title: Login endpoint of the User Login & Consent flow.

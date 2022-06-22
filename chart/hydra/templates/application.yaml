@@ -75,3 +75,7 @@ spec:
     kind: ClusterRoleBinding
   - group: v1
     kind: ServiceAccount
+  - group: batch/v1
+    kind: Job
+  - group: autoscaling/v2beta2
+    kind: HorizontalPodAutoscaler

@@ -36,7 +36,7 @@ metadata:
 type: Opaque
 data:
   db-user: "aHlkcmE="
-  db-password: "QlNqbExLcjBwaWZVckNWdndaYTQ="
+  db-password: "VnkyOHVlcXZvQmN6Um1rV1lGZko="
 ---
 # Source: hydra/templates/secrets.yaml
 apiVersion: v1
@@ -55,9 +55,9 @@ metadata:
 type: Opaque
 data:
   # Generate a random secret if the user doesn't give one. User given password has priority
-  secretsSystem: "cGVQdFY4ckUxeEZ2REh2VG5IMTM2MnNYaU5acld3TTQ="
-  secretsCookie: "OTlYVVl3ckJtYzlzZjNQRnFYSGJ3M0sxZlY2a0gyRnI="
-  dsn: "cG9zdGdyZXM6Ly9oeWRyYTpCU2psTEtyMHBpZlVyQ1Z2d1phNEBoeWRyYS0xLXBvc3RncmVzcWwtc3ZjOjU0MzIvaHlkcmE/c3NsbW9kZT1kaXNhYmxl"
+  secretsSystem: "d0dLZnFYYzNoYWJxSjZQdlVENkd3WE0yTzluVkNaMzM="
+  secretsCookie: "d2piSkJXSjFFMDBmUEZORlIzejdkZ2UyMHpWR1MyQmg="
+  dsn: "cG9zdGdyZXM6Ly9oeWRyYTpWeTI4dWVxdm9CY3pSbWtXWUZmSkBoeWRyYS0xLXBvc3RncmVzcWwtc3ZjOjU0MzIvaHlkcmE/c3NsbW9kZT1kaXNhYmxl"
 ---
 # Source: hydra/templates/configmap.yaml
 apiVersion: v1
@@ -83,10 +83,11 @@ data:
         - 172.16.0.0/12
         - 192.168.0.0/16
     urls:
-      consent: http://127.0.0.1:3000/consent
-      login: http://127.0.0.1:3000/login
-      logout: http://127.0.0.1:3000/logout
-      self: {}
+      consent: http://app-1:3000/consent
+      login: http://app-1:3000/login
+      logout: http://app-1:3000/logout
+      self:
+        issuer: http://127.0.0.1:4444
 ---
 # Source: hydra/templates/postgresql-services.yaml
 apiVersion: v1
@@ -271,25 +272,6 @@ spec:
             runAsUser: 100
             allowPrivilegeEscalation: false
             privileged: false
-        
-        - name: prometheus-to-sd
-          image: gke.gcr.io/prometheus-to-sd:v0.11.1-gke.1
-          command:
-            - /monitor
-            - --stackdriver-prefix=custom.googleapis.com
-            - --source=hydra:http://localhost:4445/metrics/prometheus
-            - --pod-id=$(POD_NAME)
-            - --namespace-id=$(POD_NAMESPACE)
-            - --monitored-resource-type-prefix=k8s_
-          env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: POD_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
 ---
 # Source: hydra/templates/hpa.yaml
 apiVersion: autoscaling/v2beta2
@@ -373,27 +355,6 @@ spec:
             secretKeyRef:
               name: hydra-1-postgresql-secret
               key: db-password
-      - name: prometheus-to-sd
-        image: gke.gcr.io/prometheus-to-sd:v0.11.1-gke.1
-        ports:
-        - name: profiler
-          containerPort: 6060
-        command:
-        - /monitor
-        - --stackdriver-prefix=custom.googleapis.com
-        - --source=postgresql:http://localhost:9187/metrics
-        - --pod-id=$(POD_NAME)
-        - --namespace-id=$(POD_NAMESPACE)
-        - --monitored-resource-type-prefix=k8s_
-        env:
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
   volumeClaimTemplates:
   - metadata:
       name: hydra-1-postgresql-pvc

@@ -172,6 +172,12 @@ export URLS_LOGOUT=<URLS_LOGOUT>
 export URLS_CONSENT=<URLS_CONSENT>
 ```
 
+Specify the value to be used as the "issuer" in access and ID tokens:
+
+```shell
+export URLS_SELF_ISSUER=<URLS_SELF_ISSUER>
+```
+
 #### (Optional) Expose Public/Admin API Endpoint
 You can enable Ingress for Public or Admin API Endpoint by changing the value to `true` for the `INGRESS_PUBLIC_ENABLED` and `INGRESS_ADMIN_ENABLED` variables:
 
@@ -206,13 +212,12 @@ export INGRESS_ADMIN_ENABLED=false
 
 #### (Optional) Enable HTTP/2 over TLS (HTTPS)
 
-If you would like to use https instead of http, you need to set the `FORCE_HTTP_ENABLED` to `false` and specify the value to be used as the "issuer" in access and ID tokens:
+If you would like to use https instead of http, you need to set the `FORCE_HTTP_ENABLED` to `false`.
 
 > **NOTE:** With this option enabled you may need to configure a few other options. For more information see the [official Ory Hydra documentation](https://www.ory.sh/docs/welcome).
 
 ```shell
 export FORCE_HTTP_ENABLED=true
-export URLS_SELF_ISSUER=<URLS_SELF_ISSUER>
 ```
 
 #### Create namespace in your Kubernetes cluster

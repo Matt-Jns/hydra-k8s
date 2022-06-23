@@ -188,7 +188,7 @@ export INGRESS_ADMIN_ENABLED=false
 
 #### (Optional) Creating a Transport Layer Security (TLS) certificate for GitLab
 
-> This step is optional and should be used only if Ingress for Public or Admin API Endpoint is enabled.
+> It is always better to use valid certificate signed by CA instead of a self-signed one. This step is optional and should be used only if Ingress for Public or Admin API Endpoint is enabled.
 
 1.  If you already have a certificate that you want to use, copy your
     certificate and key pair to the `/tmp/tls.crt` and `/tmp/tls.key` files,

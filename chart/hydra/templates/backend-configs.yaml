@@ -14,8 +14,8 @@ spec:
     requestPath: /health/ready
     port: 4444
 {{- end }}
-{{- if .Values.ingress.admin.enabled -}}
 ---
+{{- if .Values.ingress.admin.enabled -}}
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:

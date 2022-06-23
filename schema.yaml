@@ -80,12 +80,12 @@ properties:
     type: boolean
     title: Expose Public API Endpoint
     description: Enable Ingress for Public API Endpoint.
-    default: false
+    default: true
   ingress.admin.enabled:
     type: boolean
     title: Expose Administrative API Endpoint
     description: Enable Ingress for Administrative API Endpoint.
-    default: false
+    default: true
   hydra.dangerousForceHttp:
     type: boolean
     title: Enable or disable HTTP/2 over TLS (HTTPS)
@@ -120,14 +120,22 @@ properties:
       type: GENERATED_PASSWORD
       generatedPassword:
         length: 32
-  certificate:
+  certificate-admin:
     type: string
     x-google-marketplace:
       type: TLS_CERTIFICATE
       tlsCertificate:
         generatedProperties:
-          base64EncodedPrivateKey: ingress.tls.base64EncodedPrivateKey
-          base64EncodedCertificate: ingress.tls.base64EncodedCertificate
+          base64EncodedPrivateKey: ingress.admin.tls.base64EncodedPrivateKey
+          base64EncodedCertificate: ingress.admin.tls.base64EncodedCertificate
+  certificate-public:
+    type: string
+    x-google-marketplace:
+      type: TLS_CERTIFICATE
+      tlsCertificate:
+        generatedProperties:
+          base64EncodedPrivateKey: ingress.public.tls.base64EncodedPrivateKey
+          base64EncodedCertificate: ingress.public.tls.base64EncodedCertificate
 
 required:
 - name

@@ -12,7 +12,7 @@ metadata:
     {{- include "hydra.labels" . | nindent 4 }}
 spec:
   tls:
-    - secretName: {{ .Release.Name }}-tls
+    - secretName: {{ .Release.Name }}-public-tls
   rules:
     - host: "public.hydra.com"
       http:

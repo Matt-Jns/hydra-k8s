@@ -198,16 +198,24 @@ export INGRESS_ADMIN_ENABLED=false
 
     ```shell
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-        -keyout /tmp/tls.key \
-        -out /tmp/tls.crt \
-        -subj "/CN=hydra/O=hydra"
+        -keyout /tmp/tls-admin.key \
+        -out /tmp/tls-admin.crt \
+        -subj "/CN=admin.hydra.com/O=hydra"
+
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout /tmp/tls-public.key \
+        -out /tmp/tls-public.crt \
+        -subj "/CN=public.hydra.com/O=hydra"
     ```
 
-2.  Set the `TLS_CERTIFICATE_KEY` and `TLS_CERTIFICATE_CRT` variables:
+2.  Set the `TLS_CERTIFICATE_ADMIN_KEY` & `TLS_CERTIFICATE_PUBLIC_KEY` and `TLS_CERTIFICATE_ADMIN_CRT` & `TLS_CERTIFICATE_PUBLIC_CRT` variables:
 
     ```shell
-    export TLS_CERTIFICATE_KEY="$(cat /tmp/tls.key | base64)"
-    export TLS_CERTIFICATE_CRT="$(cat /tmp/tls.crt | base64)"
+    export TLS_CERTIFICATE_ADMIN_KEY="$(cat /tmp/tls-admin.key | base64)"
+    export TLS_CERTIFICATE_ADMIN_CRT="$(cat /tmp/tls-admin.crt | base64)"
+
+    export TLS_CERTIFICATE_PUBLIC_KEY="$(cat /tmp/tls-public.key | base64)"
+    export TLS_CERTIFICATE_PUBLIC_CRT="$(cat /tmp/tls-public.crt | base64)"
     ```
 
 #### (Optional) Enable HTTP/2 over TLS (HTTPS)
@@ -248,8 +256,10 @@ helm template "${APP_INSTANCE_NAME}" chart/hydra \
   --set hydra.config.urls.logout="${URLS_LOGOUT}" \
   --set hydra.config.urls.consent="${URLS_CONSENT}" \
   --set hydra.dangerousForceHttp="${FORCE_HTTP_ENABLED}" \
-  --set ingress.tls.base64EncodedPrivateKey="${TLS_CERTIFICATE_KEY}" \
-  --set ingress.tls.base64EncodedCertificate="${TLS_CERTIFICATE_CRT}" \
+  --set ingress.admin.tls.base64EncodedPrivateKey="${TLS_CERTIFICATE_ADMIN_KEY}" \
+  --set ingress.admin.tls.base64EncodedCertificate="${TLS_CERTIFICATE_ADMIN_CRT}" \
+  --set ingress.public.tls.base64EncodedPrivateKey="${TLS_CERTIFICATE_PUBLIC_KEY}" \
+  --set ingress.public.tls.base64EncodedCertificate="${TLS_CERTIFICATE_PUBLIC_CRT}" \
   --set hydra.config.urls.self.issuer="${URLS_SELF_ISSUER}" \
   --set metrics.image="${IMAGE_METRICS_EXPORTER}" \
   --set metrics.exporter.enabled="${METRICS_EXPORTER_ENABLED}" > "${APP_INSTANCE_NAME}"_manifest.yaml

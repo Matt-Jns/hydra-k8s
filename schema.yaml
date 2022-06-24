@@ -141,7 +141,3 @@ required:
 - name
 - namespace
 - metrics.exporter.enabled
-- hydra.config.urls.login
-- hydra.config.urls.logout
-- hydra.config.urls.consent
-- hydra.config.urls.self.issuer

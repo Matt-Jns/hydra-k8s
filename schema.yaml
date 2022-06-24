@@ -88,8 +88,8 @@ properties:
     default: true
   hydra.dangerousForceHttp:
     type: boolean
-    title: Enable or disable HTTP/2 over TLS (HTTPS)
-    description: Enable or disable HTTP/2 over TLS (HTTPS) and serves HTTP instead. With this option disabled you will need to configure a few other options. For more information see the [Configuration | Ory Hydra](https://www.ory.sh/docs/hydra/reference/configuration).
+    title: Disable HTTP/2 over TLS (HTTPS)
+    description: Disable HTTP/2 over TLS (HTTPS) and serves HTTP instead. After enabling "HTTP/2 over TLS (HTTPS)" you will have to configure some other options. For more information see the [reference configuration | Ory Hydra](https://www.ory.sh/docs/hydra/reference/configuration).
     default: true
   hydra.config.urls.login:
     type: string
@@ -111,7 +111,7 @@ properties:
     type: boolean
     title: Enable Stackdriver Metrics Exporter
     description: Your GCP project should have Stackdriver enabled. For non-GCP clusters, export of metrics to Stackdriver is not supported yet.
-    default: true
+    default: false
 
   # Generated values
   postgresql.password:
@@ -141,3 +141,7 @@ required:
 - name
 - namespace
 - metrics.exporter.enabled
+- hydra.config.urls.login
+- hydra.config.urls.logout
+- hydra.config.urls.consent
+- hydra.config.urls.self.issuer

@@ -20,6 +20,7 @@ through a Kubernetes ConfigMap. It's good to know that you can modify this Confi
 
 # Installation
 
+For sample deployment of Ory Hydra based on this repository and an exemplary User Login & Consent App refer to [Ory Hydra quick setup](docs/ORY_HYDRA_QUICK_SETUP.md). 
 ## Quick install with Google Cloud Marketplace
 
 Get up and running with a few clicks! Install this Ory Hydra app to a Google
@@ -332,6 +333,9 @@ This installation of Hydra by default is deployed with the `HorizontalPodAutosca
 # Upgrading the app
 
 See: [Apply Upgrades](https://www.ory.sh/docs/hydra/guides/upgrade)
+
+# Backup and restore
+The Ory Hydra works in SQL mode - all data is stored in the PostgreSQL database. To create a backup we need to back up a PostgreSQL Database. To back up your database, please refer to [Backing up PostgreSQL](https://github.com/GoogleCloudPlatform/click-to-deploy/tree/master/k8s/postgresql#backing-up-postgresql).
 
 # Uninstalling the Application
 

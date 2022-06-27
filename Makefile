@@ -13,13 +13,13 @@ METRICS_EXPORTER_TAG ?= v0.11.1-gke.1
 
 VERIFY_WAIT_TIMEOUT = 1800
 
-# SOURCE_REGISTRY ?= marketplace.gcr.io/google
-SOURCE_REGISTRY ?= gcr.io/ccm-ops-test-adhoc
+SOURCE_REGISTRY ?= marketplace.gcr.io/google
+# SOURCE_REGISTRY ?= gcr.io/ccm-ops-test-adhoc
 IMAGE_HYDRA ?= $(SOURCE_REGISTRY)/hydra:$(TRACK)
-# IMAGE_POSTGRESQL ?= $(SOURCE_REGISTRY)/postgresql11:$(POSTGRESQL_TAG)
-IMAGE_POSTGRESQL ?= gcr.io/cloud-marketplace/google/postgresql13:13.4
-# IMAGE_POSTGRESQL_EXPORTER ?= $(SOURCE_REGISTRY)/postgresql-exporter0:$(POSTGRESQL_EXPORTER_TAG)
-IMAGE_POSTGRESQL_EXPORTER ?= gcr.io/cloud-marketplace/google/postgresql-exporter0:0.8.0
+IMAGE_POSTGRESQL ?= $(SOURCE_REGISTRY)/postgresql13:$(POSTGRESQL_TAG)
+# IMAGE_POSTGRESQL ?= gcr.io/cloud-marketplace/google/postgresql13:13.4
+IMAGE_POSTGRESQL_EXPORTER ?= $(SOURCE_REGISTRY)/postgresql-exporter0:$(POSTGRESQL_EXPORTER_TAG)
+# IMAGE_POSTGRESQL_EXPORTER ?= gcr.io/cloud-marketplace/google/postgresql-exporter0:0.8.0
 IMAGE_PROMETHEUS_TO_SD ?= gke.gcr.io/prometheus-to-sd:$(METRICS_EXPORTER_TAG)
 
 

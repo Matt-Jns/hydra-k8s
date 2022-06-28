@@ -80,12 +80,24 @@ properties:
     type: boolean
     title: Expose Public API Endpoint
     description: Enable Ingress for Public API Endpoint.
-    default: true
+    default: false
   ingress.admin.enabled:
     type: boolean
     title: Expose Administrative API Endpoint
     description: Enable Ingress for Administrative API Endpoint.
-    default: true
+    default: false
+  hydra.memoryRequest:
+    type: string
+    title: Request memory for Hydra
+    description: Memory for a Hydra Pod
+    pattern: '^[1-9][0-9]*(\.[0-9]+)?[TGM]i$'
+    default: '128Mi'
+  hydra.cpuRequest:
+    type: string
+    title: Request CPU for Hydra
+    description: CPU for a Hydra Pod
+    pattern: '^[1-9][0-9]*(\.[0-9]+)?m$'
+    default: '100m'
   hydra.dangerousForceHttp:
     type: boolean
     title: Disable HTTP/2 over TLS (HTTPS)

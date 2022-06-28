@@ -40,6 +40,10 @@ spec:
         - name: hydra
           image: "{{ .Values.hydra.image.repo }}:{{ .Values.hydra.image.tag }}"
           imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: {{ .Values.hydra.memoryRequest | quote }}
+              cpu: {{ .Values.hydra.cpuRequest | quote }}
           command: ["/opt/hydra"]
           volumeMounts:
             - name: {{ .Release.Name }}-config-volume

@@ -39,9 +39,11 @@ ingress:
 
 # -- Configure ORY Hydra itself
 hydra:
+  cpuRequest: null
+  memoryRequest: null
   image:
-    repo: gcr.io/ccm-ops-test-adhoc
-    tag: 1.11.8
+    repo: null
+    tag: null
   serviceAccount:
     name: hydra-sa
 
@@ -66,8 +68,8 @@ hydra:
 
     urls:
       self: {}
+
 # -- Values for initialization job
 job:
   serviceAccount:
     name: "hydra-migration-sa"
-

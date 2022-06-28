@@ -156,6 +156,13 @@ export IMAGE_POSTGRESQL_EXPORTER="${IMAGE_REGISTRY}/hydra/postgresql-exporter:${
 export IMAGE_METRICS_EXPORTER="${SOURCE_REGISTRY}/hydra/prometheus-to-sd:${TAG}"
 ```
 
+Request the amount of memory and CPU for Hydra Pod:
+
+```shell
+export HYDRA_MEMORY_REQUEST=128Mi
+export HYDRA_CPU_REQUEST=100m
+```
+
 Set or generate the password for the PostgreSQL service:
 
 ```shell
@@ -251,6 +258,8 @@ helm template "${APP_INSTANCE_NAME}" chart/hydra \
   --set postgresql.image="${IMAGE_POSTGRESQL}" \
   --set postgresql.exporter.image="${IMAGE_POSTGRESQL_EXPORTER}" \
   --set postgresql.password="${POSTGRES_PASSWORD}" \
+  --set hydra.memoryRequest="${HYDRA_MEMORY_REQUEST}" \
+  --set hydra.cpuRequest="${HYDRA_CPU_REQUEST}" \
   --set ingress.public.enabled="${INGRESS_PUBLIC_ENABLED}" \
   --set ingress.admin.enabled="${INGRESS_ADMIN_ENABLED}" \
   --set hydra.config.urls.login="${URLS_LOGIN}" \
